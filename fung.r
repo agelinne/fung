@@ -19,7 +19,7 @@ for (i in colnames(df[,35:37])){
   df[[i]] <- factor(df[[i]],levels = c("0","1"),labels=c("No","Yes"))  
 }
 
-sink(file="output.txt")
+#sink(file="output.txt")
 #Summary tables
 df_sum <- df[, -grep(".f$", colnames(df))]
 explanatory = c(colnames(df_sum[,3:20]))
@@ -40,6 +40,13 @@ df$td.asperg <- ifelse(df$td.asperg == 999,NA,df$td.asperg)
 df$e <- ifelse(df$exp.asper == "Yes","1","0")
 df$e <- as.numeric(df$e)
 
+df <- mutate(df, rx = case_when(
+  vcz == "Yes"  ~ 2,
+  itz == "Yes" ~ 1,
+  TRUE ~ 0
+))
+
+df$rx <- factor(df$rx, levels=c("0","1","2"), labels = c("Neither","ITZ","VCZ"))
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #Survival plots
@@ -83,6 +90,27 @@ splots[[3]] <- ggsurvplot(surgf, data = df, risk.table = FALSE,
 tiff("surv.tiff", units="in", width=5, height=5, res=300)
 arrange_ggsurvplots(splots,
                     ncol = 1, nrow = 3)
+dev.off()
+
+#Facet wraped survival plots
+require("survival")
+fit <- survfit(Surv(td.asperg, e) ~ vcz,
+                 data = df )
+
+# Visualize: plot survival curves facet by rx and surg
+#++++++++++++++++++++++++++++++++++++
+df$surg <- factor(df$surg, levels = c("No","Yes"), 
+                  labels = c("No Surgery","Surgery"))
+
+tiff("vcz.tiff", units="in", width=5, height=3, res=500)
+ggsurvplot(fit, df, facet.by = c("surg"),
+           conf.int = TRUE,
+           xlim = c(0,240), ylim=c(0.5,1),
+           pval.coord = c(0,.52), pval = TRUE,pval.size = .5,
+           font.x=c(12,"bold"), font.y=c(12,"bold"),
+           ggtheme = theme_bw(), break.time.by = 30,
+           palette=c("#808080", "#2E9FDF"), legend.title = "VCZ",
+           short.panel.labs = TRUE,panel.labs.font = list(12,"bold"))
 dev.off()
 
 #clean up
