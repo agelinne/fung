@@ -61,6 +61,8 @@ finalfit(df,dependent, explanatory, metrics=TRUE, na_to_missing = TRUE)
 
 ##Survival Plot
 #convert variables to proper format for surv fitting
+df$t <- df$td.asperg
+df$t <- ifelse(df$t== 999,NA,df$t)
 df$td.asperg <- replace_na(df$td.asperg, 240)
 df$td.asperg <- ifelse(df$td.asperg == 999,NA,df$td.asperg)
 
@@ -117,9 +119,24 @@ splots[[3]] <- ggsurvplot(surgf, data = df, risk.table = FALSE,
                           ggtheme = theme_bw(), break.time.by = 30, palette=c("#808080", "#2E9FDF"))
 
 # Arrange multiple ggsurvplots and print the output
-tiff("surv.tiff", units="in", width=5, height=5, res=300)
+tiff("surv.tiff", units="in", width=3.7, height=5, res=300)
 arrange_ggsurvplots(splots,
                     ncol = 1, nrow = 3)
+dev.off()
+
+#Time Removal Plot
+tiff("time.tiff", units="in", width=4, height=3, res=400)
+mu <- ddply(subset(df,e=="1"), "surg", summarize, grp.mean=mean(t,na.rm=TRUE))
+ggplot(subset(df,e=="1"), aes(x=t, fill = surg)) + 
+  geom_density(aes(color=surg),alpha=.5) + 
+  geom_vline(data=mu, aes(xintercept=grp.mean, color=surg),
+             linetype="dashed") +
+  labs(y="Aspergillosis Expiration (density)",x="Time (days)", fill = "Surgery", colour = "Surgery") +
+  scale_color_manual(values=c("#808080", "#2E9FDF")) + 
+  scale_fill_manual(values=c("#808080", "#2E9FDF")) + theme_bw() +
+  theme(axis.title.x=element_text(face="bold"), 
+        axis.title.y=element_text(face="bold"),
+        legend.title = element_text(face="bold"))
 dev.off()
 
 #Facet wraped survival plots
