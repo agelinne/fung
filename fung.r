@@ -26,15 +26,15 @@ sink(file="output.txt")
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #Summary tables
 df_sum <- df[, -grep(".f$", colnames(df))]
-explanatory = c(colnames(df_sum[,3:20]))
+explanatory = c(colnames(df_sum[,2:20]))
 dependent = 'exp.asper'
 summary_factorlist(df,dependent, explanatory,
-                   p=TRUE, add_dependent_label=TRUE)
+                   p=TRUE, add_dependent_label=TRUE, column = FALSE)
 
 #Regression Table expired
 explanatory = c("surg","vcz","ampb", "lampb","itz","fluco","num.agent")
 dependent = 'exp.asper'
-finalfit(df,dependent, explanatory, metrics=TRUE, na_to_missing = TRUE)
+finalfit(df,dependent, explanatory, metrics=TRUE, na_to_missing = TRUE, column = FALSE)
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #Expired other
