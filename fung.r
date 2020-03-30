@@ -32,7 +32,7 @@ summary_factorlist(df,dependent, explanatory,
                    p=TRUE, add_dependent_label=TRUE, column = FALSE)
 
 #Regression Table expired
-explanatory = c("surg","vcz","ampb", "lampb","itz","fluco","num.agent")
+explanatory = c("surg","vcz","ampb","itz","num.agent")
 dependent = 'exp.asper'
 finalfit(df,dependent, explanatory, metrics=TRUE, na_to_missing = TRUE, column = FALSE)
 
