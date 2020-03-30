@@ -11,11 +11,11 @@ p_load(pacman, dplyr, GGally, ggplot2, ggthemes,
 fung_csv <- import("fung.csv")
 df <- data.frame(fung_csv)
 
-for (i in colnames(df[,3:33])){   
+for (i in colnames(df[,4:34])){   
   df[[i]] <- factor(df[[i]],levels = c("0","1"),labels=c("No","Yes"))  
 }
 
-for (i in colnames(df[,35:37])){   
+for (i in colnames(df[,36:38])){   
   df[[i]] <- factor(df[[i]],levels = c("0","1"),labels=c("No","Yes"))  
 }
 
@@ -32,7 +32,7 @@ summary_factorlist(df,dependent, explanatory,
                    p=TRUE, add_dependent_label=TRUE, column = FALSE)
 
 #Regression Table expired
-explanatory = c("surg","vcz","ampb","itz","num.agent")
+explanatory = c("surg","vcz","ampb","itz","num.agent","year")
 dependent = 'exp.asper'
 finalfit(df,dependent, explanatory, metrics=TRUE, na_to_missing = TRUE, column = FALSE)
 
